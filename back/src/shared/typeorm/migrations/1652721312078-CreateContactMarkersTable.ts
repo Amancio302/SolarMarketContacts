@@ -27,7 +27,6 @@ export class CreateContactMarkersTable1652721312078
           {
             name: 'tag',
             type: 'varchar',
-            isUnique: true,
           },
           {
             name: 'contact_category',

@@ -26,12 +26,12 @@ export default class CompanysController {
 
   public async update(request: Request, response: Response): Promise<Response> {
     const { name } = request.body;
-    const { id } = request.params;
+    const { idCompany } = request.params;
 
     const updateCompany = new UpdateCompany();
 
     const product = await updateCompany.execute({
-      id,
+      id: idCompany,
       name,
     });
 

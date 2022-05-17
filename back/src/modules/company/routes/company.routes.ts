@@ -18,7 +18,7 @@ productsRouter.post(
 );
 
 productsRouter.put(
-  '/:id',
+  '/:idCompany',
   celebrate({
     [Segments.BODY]: {
       name: Joi.string().required(),

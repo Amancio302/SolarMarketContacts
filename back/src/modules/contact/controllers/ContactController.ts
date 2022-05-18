@@ -15,14 +15,14 @@ export default class ContactsController {
   }
 
   public async create(request: Request, response: Response): Promise<Response> {
-    const { value, person, contact_marker } = request.body;
+    const { value, person, contactMarker } = request.body;
 
     const createContact = new CreateContact();
 
     const contact = await createContact.execute({
       value,
       person,
-      contact_marker,
+      contactMarker,
     });
 
     return response.json(contact);
@@ -49,7 +49,7 @@ export default class ContactsController {
   }
 
   public async update(request: Request, response: Response): Promise<Response> {
-    const { value, person, contact_marker } = request.body;
+    const { value, person, contactMarker } = request.body;
     const { idContact } = request.params;
 
     const updateContact = new UpdateContact();
@@ -58,7 +58,7 @@ export default class ContactsController {
       id: idContact,
       value,
       person,
-      contact_marker,
+      contactMarker,
     });
 
     return response.json(contact);

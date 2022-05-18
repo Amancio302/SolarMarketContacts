@@ -1,4 +1,4 @@
-import Contact_Marker from '@modules/contact_marker/typeorm/entities/Contact_Marker';
+import ContactMarker from '@modules/contactMarker/typeorm/entities/ContactMarker';
 import Person from '@modules/person/typeorm/entities/Person';
 import {
   Column,
@@ -18,9 +18,9 @@ class Contact {
   @Column()
   value: string;
 
-  @ManyToOne(() => Contact_Marker, { eager: true })
-  @JoinColumn({ name: 'contact_marker' })
-  contact_marker: Contact_Marker;
+  @ManyToOne(() => ContactMarker, { eager: true })
+  @JoinColumn({ name: 'contactMarker' })
+  contactMarker: ContactMarker;
 
   @ManyToOne(() => Person, { eager: true })
   @JoinColumn({ name: 'person' })

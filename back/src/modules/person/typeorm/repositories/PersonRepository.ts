@@ -5,7 +5,7 @@ import Person from '../entities/Person';
 class PersonsRepository extends Repository<Person> {
   public async findByName(name: string): Promise<Person | undefined> {
     const person = await this.findOne({
-      where: [{ first_name: name }, { last_name: name }],
+      where: [{ firstName: name }, { lastName: name }],
     });
 
     return person;

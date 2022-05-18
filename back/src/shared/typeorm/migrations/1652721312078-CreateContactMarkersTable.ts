@@ -11,7 +11,7 @@ export class CreateContactMarkersTable1652721312078
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'contact_marker',
+        name: 'contactMarker',
         columns: [
           {
             name: 'id',
@@ -29,18 +29,18 @@ export class CreateContactMarkersTable1652721312078
             type: 'varchar',
           },
           {
-            name: 'contact_category',
+            name: 'contactCategory',
             type: 'int',
           },
         ],
       }),
     );
     await queryRunner.createForeignKey(
-      'contact_marker',
+      'contactMarker',
       new TableForeignKey({
         name: 'MarkerCategory',
-        columnNames: ['contact_category'],
-        referencedTableName: 'contact_category',
+        columnNames: ['contactCategory'],
+        referencedTableName: 'contactCategory',
         referencedColumnNames: ['id'],
         onDelete: 'RESTRICT',
       }),
@@ -48,6 +48,6 @@ export class CreateContactMarkersTable1652721312078
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('contact_marker');
+    await queryRunner.dropTable('contactMarker');
   }
 }

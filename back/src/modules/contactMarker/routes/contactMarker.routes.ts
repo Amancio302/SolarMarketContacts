@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import Contact_MarkerController from '../controllers/Contact_MarkerController';
+import ContactMarkerController from '../controllers/ContactMarkerController';
 import { celebrate, Joi, Segments } from 'celebrate';
 
 const productsRouter = Router();
-const productsController = new Contact_MarkerController();
+const productsController = new ContactMarkerController();
 
 productsRouter.get('/', productsController.index);
 
@@ -13,7 +13,7 @@ productsRouter.post(
     [Segments.BODY]: {
       name: Joi.string().required(),
       tag: Joi.string().required(),
-      contact_category: Joi.number().required(),
+      contactCategory: Joi.number().required(),
     },
   }),
   productsController.create,

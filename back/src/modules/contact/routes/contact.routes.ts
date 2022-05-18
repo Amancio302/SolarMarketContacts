@@ -13,7 +13,7 @@ personRouter.post(
     [Segments.BODY]: {
       value: Joi.string().required(),
       person: Joi.number().required(),
-      contact_marker: Joi.number().required(),
+      contactMarker: Joi.number().required(),
     },
   }),
   contactController.create,
@@ -45,7 +45,7 @@ personRouter.put(
     [Segments.BODY]: {
       value: Joi.string().required(),
       person: Joi.number().required(),
-      contact_marker: Joi.number().required(),
+      contactMarker: Joi.number().required(),
     },
     [Segments.PARAMS]: {
       idContact: Joi.number().required(),

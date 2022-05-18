@@ -19,7 +19,7 @@ export class CreateContactTable1652723479644 implements MigrationInterface {
             generationStrategy: 'increment',
           },
           {
-            name: 'contact_marker',
+            name: 'contactMarker',
             type: 'int',
           },
           {
@@ -48,8 +48,8 @@ export class CreateContactTable1652723479644 implements MigrationInterface {
       'contact',
       new TableForeignKey({
         name: 'ContactMarker',
-        columnNames: ['contact_marker'],
-        referencedTableName: 'contact_marker',
+        columnNames: ['contactMarker'],
+        referencedTableName: 'contactMarker',
         referencedColumnNames: ['id'],
         onDelete: 'RESTRICT',
       }),

@@ -1,4 +1,4 @@
-import Contact_MarkerRepository from '@modules/contact_marker/typeorm/repositories/Contact_MarkerRepository';
+import ContactMarkerRepository from '@modules/contactMarker/typeorm/repositories/ContactMarkerRepository';
 import PersonsRepository from '@modules/person/typeorm/repositories/PersonRepository';
 import AppError from '@shared/errors/AppError';
 import { getCustomRepository } from 'typeorm';
@@ -8,18 +8,18 @@ import ContactRepository from '../typeorm/repositories/ContactRepository';
 interface ICreateContact {
   value: string;
   person: number;
-  contact_marker: number;
+  contactMarker: number;
 }
 
 class CreateContactService {
   public async execute({
     value,
     person,
-    contact_marker,
+    contactMarker,
   }: ICreateContact): Promise<Contact> {
     const contactRepository = getCustomRepository(ContactRepository);
-    const contact_markerRepository = getCustomRepository(
-      Contact_MarkerRepository,
+    const contactMarkerRepository = getCustomRepository(
+      ContactMarkerRepository,
     );
     const personRepository = getCustomRepository(PersonsRepository);
 
@@ -29,7 +29,7 @@ class CreateContactService {
       throw new AppError('No such person!');
     }
 
-    const existsMarker = await contact_markerRepository.findOne(contact_marker);
+    const existsMarker = await contactMarkerRepository.findOne(contactMarker);
 
     if (!existsMarker) {
       throw new AppError('No such contact marker!');
@@ -38,7 +38,7 @@ class CreateContactService {
     const contact = contactRepository.create({
       value,
       person: existsPerson,
-      contact_marker: existsMarker,
+      contactMarker: existsMarker,
     });
 
     await contactRepository.save(contact);

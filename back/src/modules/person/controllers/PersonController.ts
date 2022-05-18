@@ -15,14 +15,14 @@ export default class PersonsController {
   }
 
   public async create(request: Request, response: Response): Promise<Response> {
-    const { first_name, last_name, birth_date, company } = request.body;
+    const { firstName, lastName, birthDate, company } = request.body;
 
     const createPerson = new CreatePerson();
 
     const person = await createPerson.execute({
-      first_name,
-      last_name,
-      birth_date,
+      firstName,
+      lastName,
+      birthDate,
       company,
     });
 
@@ -50,16 +50,16 @@ export default class PersonsController {
   }
 
   public async update(request: Request, response: Response): Promise<Response> {
-    const { first_name, last_name, birth_date, company } = request.body;
+    const { firstName, lastName, birthDate, company } = request.body;
     const { idPerson } = request.params;
 
     const updatePerson = new UpdatePerson();
 
     const person = await updatePerson.execute({
       id: idPerson,
-      first_name,
-      last_name,
-      birth_date,
+      firstName,
+      lastName,
+      birthDate,
       company,
     });
 

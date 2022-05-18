@@ -19,15 +19,15 @@ export class CreatePersonTable1652721611936 implements MigrationInterface {
             generationStrategy: 'increment',
           },
           {
-            name: 'first_name',
+            name: 'firstName',
             type: 'varchar',
           },
           {
-            name: 'last_name',
+            name: 'lastName',
             type: 'varchar',
           },
           {
-            name: 'birth_date',
+            name: 'birthDate',
             type: 'date',
             isNullable: true,
           },

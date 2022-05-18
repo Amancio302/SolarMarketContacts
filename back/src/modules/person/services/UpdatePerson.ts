@@ -5,19 +5,19 @@ import Person from '../typeorm/entities/Person';
 import PersonRepository from '../typeorm/repositories/PersonRepository';
 
 interface IRequest {
-  first_name: string;
-  last_name: string;
-  birth_date: Date;
-  company: string;
+  firstName: string;
+  lastName: string;
+  birthDate?: Date;
+  company?: string;
   id: string;
 }
 
 class UpdatePersonService {
   public async execute({
     id,
-    first_name,
-    last_name,
-    birth_date,
+    firstName,
+    lastName,
+    birthDate,
     company,
   }: IRequest): Promise<Person> {
     const personRepository = getCustomRepository(PersonRepository);
@@ -39,9 +39,9 @@ class UpdatePersonService {
       person.company = existsCompany;
     }
 
-    person.first_name = first_name;
-    person.last_name = last_name;
-    person.birth_date = birth_date;
+    person.firstName = firstName;
+    person.lastName = lastName;
+    person.birthDate = birthDate;
 
     await personRepository.save(person);
 

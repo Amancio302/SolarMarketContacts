@@ -11,9 +11,9 @@ personRouter.post(
   '/',
   celebrate({
     [Segments.BODY]: {
-      first_name: Joi.string().required(),
-      last_name: Joi.string().required(),
-      birth_date: Joi.date().required(),
+      firstName: Joi.string().required(),
+      lastName: Joi.string().required(),
+      birthDate: Joi.date(),
       company: Joi.number(),
     },
   }),
@@ -44,9 +44,9 @@ personRouter.put(
   '/:idPerson',
   celebrate({
     [Segments.BODY]: {
-      first_name: Joi.string().required(),
-      last_name: Joi.string().required(),
-      birth_date: Joi.date().required(),
+      firstName: Joi.string().required(),
+      lastName: Joi.string().required(),
+      birthDate: Joi.date(),
       company: Joi.number(),
     },
     [Segments.PARAMS]: {

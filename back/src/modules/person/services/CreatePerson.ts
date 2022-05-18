@@ -5,17 +5,17 @@ import Person from '../typeorm/entities/Person';
 import PersonRepository from '../typeorm/repositories/PersonRepository';
 
 interface ICreatePerson {
-  first_name: string;
-  last_name: string;
-  birth_date: Date;
-  company: number;
+  firstName: string;
+  lastName: string;
+  birthDate?: Date;
+  company?: number;
 }
 
 class CreatePersonService {
   public async execute({
-    first_name,
-    last_name,
-    birth_date,
+    firstName,
+    lastName,
+    birthDate,
     company,
   }: ICreatePerson): Promise<Person> {
     const personRepository = getCustomRepository(PersonRepository);
@@ -32,9 +32,9 @@ class CreatePersonService {
     }
 
     const person = personRepository.create({
-      first_name,
-      last_name,
-      birth_date,
+      firstName,
+      lastName,
+      birthDate,
       company: hasCompany,
     });
 

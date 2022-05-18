@@ -1,5 +1,5 @@
-import Contact_Marker from '@modules/contact_marker/typeorm/entities/Contact_Marker';
-import Contact_MarkerRepository from '@modules/contact_marker/typeorm/repositories/Contact_MarkerRepository';
+import ContactMarker from '@modules/contactMarker/typeorm/entities/ContactMarker';
+import ContactMarkerRepository from '@modules/contactMarker/typeorm/repositories/ContactMarkerRepository';
 import Person from '@modules/person/typeorm/entities/Person';
 import PersonsRepository from '@modules/person/typeorm/repositories/PersonRepository';
 import AppError from '@shared/errors/AppError';
@@ -10,7 +10,7 @@ import ContactRepository from '../typeorm/repositories/ContactRepository';
 interface ICreateContact {
   value: string;
   person: number;
-  contact_marker: number;
+  contactMarker: number;
   id: string;
 }
 
@@ -18,12 +18,12 @@ class CreateContactService {
   public async execute({
     value,
     person,
-    contact_marker,
+    contactMarker,
     id,
   }: ICreateContact): Promise<Contact> {
     const contactRepository = getCustomRepository(ContactRepository);
-    const contact_markerRepository = getCustomRepository(
-      Contact_MarkerRepository,
+    const contactMarkerRepository = getCustomRepository(
+      ContactMarkerRepository,
     );
     const personRepository = getCustomRepository(PersonsRepository);
 
@@ -43,10 +43,10 @@ class CreateContactService {
       }
     }
 
-    let existsMarker: Contact_Marker | undefined = contact.contact_marker;
+    let existsMarker: ContactMarker | undefined = contact.contactMarker;
 
-    if (contact.contact_marker.id !== contact_marker) {
-      existsMarker = await contact_markerRepository.findOne(contact_marker);
+    if (contact.contactMarker.id !== contactMarker) {
+      existsMarker = await contactMarkerRepository.findOne(contactMarker);
 
       if (!existsMarker) {
         throw new AppError('No such contact marker!');
@@ -55,7 +55,7 @@ class CreateContactService {
 
     contact.value = value;
     contact.person = existsPerson;
-    contact.contact_marker = existsMarker;
+    contact.contactMarker = existsMarker;
 
     await personRepository.save(contact);
 

@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import Contact_CategoryController from '../controllers/Contact_CategoryController';
+import ContactCategoryController from '../controllers/ContactCategoryController';
 import { celebrate, Joi, Segments } from 'celebrate';
 
 const productsRouter = Router();
-const productsController = new Contact_CategoryController();
+const productsController = new ContactCategoryController();
 
 productsRouter.get('/', productsController.index);
 

@@ -17,13 +17,15 @@ class Person {
   id: string;
 
   @Column()
-  first_name: string;
+  firstName: string;
 
   @Column()
-  last_name: string;
+  lastName: string;
 
-  @Column('date')
-  birth_date: Date;
+  @Column('date', {
+    nullable: true,
+  })
+  birthDate?: Date;
 
   @ManyToOne(() => Company)
   @JoinColumn({ name: 'company' })

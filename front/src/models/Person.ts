@@ -9,3 +9,12 @@ export interface IPerson {
   company?: ICompany;
   contacts: IContact[];
 }
+
+export interface IRequestPerson {
+  id?: number;
+  firstName: string;
+  lastName: string;
+  birthDate?: Date;
+  company?: ICompany;
+  contacts?: IContact[];
+}

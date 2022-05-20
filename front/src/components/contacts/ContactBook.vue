@@ -12,6 +12,7 @@
           v-bind="contact"
           @delete="onDelete(contact.index)"
           @update="onUpdate(contact.index)"
+          @save="onSave(contact.index, $event)"
         />
       </v-col>
     </v-row>
@@ -22,9 +23,9 @@
 import { Vue } from "vue-property-decorator";
 import Contact from "./Contact.vue";
 
-import { IBookedPerson } from "../../models/ContactBookInterfaces";
-import { IContact } from "../../models/Contact";
-import { ICompany } from "../../models/Company";
+import { IBookedPerson } from "@/models/ContactBookInterfaces";
+import { IContact } from "@/models/Contact";
+import { ICompany } from "@/models/Company";
 
 interface IComputedContact {
   id: number;
@@ -52,6 +53,7 @@ export default Vue.extend({
   },
   computed: {
     computedContacts: function (): IComputedContact[] {
+      console.log("Teste", this.contacts);
       return this.contacts.map(
         ({ person, active, index }: IBookedPerson): IComputedContact => ({
           id: person.id,
@@ -72,6 +74,10 @@ export default Vue.extend({
     },
     onUpdate(index: number): void {
       this.$emit("update", index);
+    },
+    onSave(index: number, data: IContact): void {
+      console.log(data);
+      this.$emit("save", { index, data });
     },
   },
 });

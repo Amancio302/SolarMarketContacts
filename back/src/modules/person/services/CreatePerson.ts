@@ -40,6 +40,8 @@ class CreatePersonService {
 
     await personRepository.save(person);
 
+    person.contacts = [];
+
     return person;
   }
 }

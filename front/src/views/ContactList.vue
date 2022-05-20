@@ -5,6 +5,7 @@
         :contacts="contactList"
         @delete="onDelete"
         @update="onUpdate"
+        @save="onSave($event.index, $event.data)"
       />
     </DefaultCard>
   </v-container>
@@ -19,8 +20,14 @@ import { confirm } from "../components/alerts/Alerts";
 
 import { IDefaultCardAction } from "../models/DefaultCardInterfaces";
 import { IBookedPerson } from "../models/ContactBookInterfaces";
+import { IPerson, IRequestPerson } from "../models/Person";
 
-import { deletePerson, listPeople } from "../services/person/person";
+import {
+  deletePerson,
+  listPeople,
+  createPerson,
+} from "../services/person/person";
+import { createCompany } from "../services/company/company";
 
 interface IContactListData {
   contactList: IBookedPerson[];
@@ -50,13 +57,16 @@ export default Vue.extend({
       const res = await listPeople();
       console.log(res);
       if (res.status === 200) {
-        return res.data.map((el, i) => ({
-          person: el,
-          active: false,
-          index: i,
-        }));
+        return res.data.map((el, i) => this.contactToBookedContact(i, el));
       }
       return [];
+    },
+    contactToBookedContact(index: number, person: IPerson): IBookedPerson {
+      return {
+        person,
+        active: false,
+        index,
+      };
     },
     onAdd(): void {
       if (
@@ -93,6 +103,54 @@ export default Vue.extend({
         }
         return el;
       });
+    },
+    async onSave(index: number, data: IRequestPerson): Promise<void> {
+      if (data.id === -1) {
+        // CREATE
+        let companyId;
+        if (!data.company) {
+          // Alerta erro
+        } else if (data.company?.id === -1) {
+          // CREATE NEW COMPANY
+          companyId = await this.createCompany(data.company.name);
+          if (companyId === -1) {
+            // Alerta erro
+            return;
+          } else {
+            // Recarrega empresas
+          }
+        } else {
+          companyId = data.company.id;
+        }
+        this.createPerson(index, {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          birthDate: data.birthDate,
+          company: companyId,
+        });
+      } else {
+        // UPDATE
+      }
+    },
+    async createCompany(name: string): Promise<number> {
+      const res = await createCompany({ name });
+      if (res.status === 200) {
+        const n: number = res.data.id;
+        return n;
+      }
+      return -1;
+    },
+    async createPerson(index: number, data: any): Promise<void> {
+      const res = await createPerson(data);
+      if (res.status === 200) {
+        this.contactList[index] = this.contactToBookedContact(index, res.data);
+        this.contactList = Array.from(this.contactList);
+      } else {
+        // Alerta erro
+      }
+    },
+    updatePerson(index: number, data: IRequestPerson) {
+      // Cu
     },
   },
 });

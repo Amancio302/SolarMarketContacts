@@ -5,8 +5,8 @@ import { IPerson } from "@/models/Person";
 interface IRequest {
     firstName: string;
     lastName: string;
-    birthDate: Date;
-    company: number;
+    birthDate?: Date;
+    company?: number;
 }
 
 export async function createPerson({firstName, lastName, birthDate, company}: IRequest): Promise<AxiosResponse<IPerson>> {

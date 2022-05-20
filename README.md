@@ -5,7 +5,7 @@
 Para iniciar o banco de dados MySql
 
 ```sh
-docker run --name solarmarketcontactsdb -e MYSQL_ROOT_PASSWORD=solar-market-secret -e MYSQL_DATABASE=SolarMarketContacts -e MYSQL_USER=SolarMarket -e MYSQL_PASSWORD=solar-market-secret -p 3306:3306
+docker run --name solarmarketcontactsdb -e MYSQL_ROOT_PASSWORD=solar-market-secret -e MYSQL_DATABASE=SolarMarketContacts -e MYSQL_USER=SolarMarket -e MYSQL_PASSWORD=solar-market-secret -p 3306:3306 -d mysql
 ```
 
 Para criá-lo e populá-lo

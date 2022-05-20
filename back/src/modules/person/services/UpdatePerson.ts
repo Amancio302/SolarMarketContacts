@@ -29,7 +29,7 @@ class UpdatePersonService {
       throw new AppError('Person do not exists!');
     }
 
-    if (person.company.id !== company) {
+    if (person.company?.id !== company) {
       const existsCompany = await companyRepository.findOne(company);
 
       if (!existsCompany) {

@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar app dark>
+    <v-app-bar app dark color="#456050">
       <v-row justify="center">
         <v-col cols="auto">
           <h1>SolarMarket Contacts</h1>
@@ -13,12 +13,12 @@
   </v-app>
 </template>
 
-<script lang="ts">
-import { Vue } from "vue-property-decorator";
+<script>
+export default {
+  name: "App",
 
-export default Vue.extend({
   data: () => ({
-    value: 10,
+    //
   }),
-});
+};
 </script>

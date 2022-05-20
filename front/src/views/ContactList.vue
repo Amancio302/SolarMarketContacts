@@ -1,159 +1,243 @@
 <template>
   <v-container>
-    <DefaultCard title="Meus Contatos" :actions="listActions" @add="onAdd">
+    <DefaultCard
+      title="Meus contatos"
+      :actions="contactListActions"
+      @add="onAddPerson"
+    >
       <ContactBook
-        :contacts="contactList"
-        @delete="onDelete"
+        :people="people"
+        @save="onSaveContact"
         @update="onUpdate"
-        @save="onSave($event.index, $event.data)"
+        @delete="onDelete"
       />
     </DefaultCard>
   </v-container>
 </template>
 
-<script lang="ts">
-import { Vue } from "vue-property-decorator";
-import DefaultCard from "../components/cards/DefaultCard.vue";
-import ContactBook from "../components/contacts/ContactBook.vue";
+<script>
+import DefaultCard from "@/components/cards/DefaultCard.vue";
+import ContactBook from "@/components/contact/ContactBook.vue";
+import Alert from "@/components/alert/Alerts";
 
-import { confirm } from "../components/alerts/Alerts";
-
-import { IDefaultCardAction } from "../models/DefaultCardInterfaces";
-import { IBookedPerson } from "../models/ContactBookInterfaces";
-import { IPerson, IRequestPerson } from "../models/Person";
-
+import { createContact, updateContact } from "@/services/contacts/contacts";
+import { createCompany } from "@/services/company/company";
 import {
-  deletePerson,
-  listPeople,
   createPerson,
-} from "../services/person/person";
-import { createCompany } from "../services/company/company";
+  listPeople,
+  updatePerson,
+} from "@/services/person/person";
+import { deletePerson } from "@/services/person/person";
 
-interface IContactListData {
-  contactList: IBookedPerson[];
-  listActions: IDefaultCardAction[];
-}
-
-export default Vue.extend({
-  components: { ContactBook, DefaultCard },
-  data: (): IContactListData => ({
-    listActions: [
+export default {
+  name: "ContactList",
+  components: {
+    DefaultCard,
+    ContactBook,
+  },
+  data: () => ({
+    contactListActions: [
       {
         name: "add",
         icon: "mdi-plus",
         xLarge: true,
       },
     ],
-    contactList: [],
+    people: [],
   }),
-  created(): void {
+  created() {
     this.setData();
   },
   methods: {
-    async setData(): Promise<void> {
-      this.contactList = await this.getContactList();
+    setData() {
+      this.getContactList();
     },
-    async getContactList(): Promise<IBookedPerson[]> {
-      const res = await listPeople();
-      console.log(res);
+    async getContactList() {
+      const res = await await listPeople().catch((err) => err);
       if (res.status === 200) {
-        return res.data.map((el, i) => this.contactToBookedContact(i, el));
+        this.people = res.data.map((el, i) => this.parsePerson(el, i));
       }
-      return [];
     },
-    contactToBookedContact(index: number, person: IPerson): IBookedPerson {
+    parsePerson(person, index, active = false) {
       return {
         person,
-        active: false,
         index,
+        active,
       };
     },
-    onAdd(): void {
+    onUpdate(index) {
+      this.activateMe(index);
+    },
+    activateMe(index) {
+      this.people.forEach((person, i) => {
+        if (i === index) person.active = true;
+        else person.active = false;
+      });
+    },
+    async onDelete(index) {
+      const confirmed = await Alert.confirm();
+      if (confirmed) {
+        const res = await deletePerson(this.people[index].person.id);
+        if (res.status === 200) {
+          this.people.splice(index, 1);
+          this.people.forEach((el) => {
+            if (el.index > index) el.index--;
+          });
+        } else {
+          Alert.error();
+        }
+      }
+    },
+    onAddPerson() {
+      if (this.people.at(-1).person.id === -1) return;
+      this.activateMe();
+      this.people.push(
+        this.parsePerson(
+          {
+            id: -1,
+            firstName: "",
+            lastName: "",
+            company: {
+              name: undefined,
+              id: undefined,
+            },
+            contacts: [],
+          },
+          this.people.length,
+          true
+        )
+      );
+    },
+    async onSaveContact({ value, index }) {
+      console.log(value.company?.id, value);
+      // Creates a Person?, a Company? and a Contact?
+      // Check if company exists
       if (
-        this.contactList.length > 0 &&
-        this.contactList[this.contactList.length - 1].person.id === -1
-      )
-        return;
-      this.contactList.push({
-        person: {
-          id: -1,
-          firstName: "",
-          lastName: "",
-          contacts: [],
-        },
-        active: true,
-        index: this.contactList.length,
+        value.company &&
+        value.company.id === -1 &&
+        value.company.name &&
+        value.company.name !== ""
+      ) {
+        // Creates a Company
+        const created = await this.createCompany(value.company.name);
+        if (created === false) {
+          Alert.error();
+          return;
+        }
+        value.company = created;
+      }
+      if (value.company?.id === -1) value.company = undefined;
+      // Check if person exists
+      if (value.id === -1) {
+        // Creates person
+        const created = await this.createPerson(
+          value.firstName,
+          value.lastName,
+          value.birthDate,
+          value.company?.id
+        );
+        if (created === false) {
+          Alert.error();
+          return;
+        }
+        value.id = created.id;
+        value.firstName = created.firstName;
+        value.lastName = created.lastName;
+        value.birthDate = created.birthDate;
+      }
+      // Check if person changed
+      if (value.updated) {
+        // Updates person
+        await this.updatePerson(
+          value.id,
+          value.firstName,
+          value.lastName,
+          value.birthDate,
+          value.company?.id
+        );
+      }
+      // Check if there are new or updated contacts
+      const promises = [];
+      value.contacts.map((contact) => {
+        if (contact.id === -1) {
+          // Creates contact
+          promises.push(
+            this.createContact(
+              contact.value,
+              contact.contactMarker.id,
+              value.id
+            )
+          );
+        }
+        if (contact.updated) {
+          // Updates contact
+          promises.push(
+            this.updateContact(
+              contact.id,
+              contact.value,
+              contact.contactMarker.id,
+              value.id
+            )
+          );
+        }
       });
+      await Promise.all(promises);
+      this.people[index].person = value;
+      this.people[index].active = false;
     },
-    async onDelete(index: number): Promise<void> {
-      const deleteIt = await confirm();
-      if (deleteIt) {
-        const deleted = this.contactList.splice(index, 1)[0].person.id;
-        if (deleted !== -1) {
-          deletePerson(deleted);
-        }
-      }
-    },
-    onUpdate(index: number): void {
-      this.contactList = this.contactList.map((el, i) => {
-        if (i === index) {
-          el.active = true;
-        } else {
-          el.active = false;
-        }
-        return el;
-      });
-    },
-    async onSave(index: number, data: IRequestPerson): Promise<void> {
-      if (data.id === -1) {
-        // CREATE
-        let companyId;
-        if (!data.company) {
-          // Alerta erro
-        } else if (data.company?.id === -1) {
-          // CREATE NEW COMPANY
-          companyId = await this.createCompany(data.company.name);
-          if (companyId === -1) {
-            // Alerta erro
-            return;
-          } else {
-            // Recarrega empresas
-          }
-        } else {
-          companyId = data.company.id;
-        }
-        this.createPerson(index, {
-          firstName: data.firstName,
-          lastName: data.lastName,
-          birthDate: data.birthDate,
-          company: companyId,
-        });
-      } else {
-        // UPDATE
-      }
-    },
-    async createCompany(name: string): Promise<number> {
-      const res = await createCompany({ name });
+    async createCompany(name) {
+      const res = await createCompany({ name }).catch((err) => err);
       if (res.status === 200) {
-        const n: number = res.data.id;
-        return n;
+        return res.data;
       }
-      return -1;
+      return false;
     },
-    async createPerson(index: number, data: any): Promise<void> {
-      const res = await createPerson(data);
+    async createPerson(firstName, lastName, birthDate, company) {
+      const res = await createPerson({
+        firstName,
+        lastName,
+        birthDate,
+        company,
+      }).catch((err) => err);
       if (res.status === 200) {
-        this.contactList[index] = this.contactToBookedContact(index, res.data);
-        this.contactList = Array.from(this.contactList);
-      } else {
-        // Alerta erro
+        return res.data;
       }
+      return false;
     },
-    updatePerson(index: number, data: IRequestPerson) {
-      // Cu
+    async updatePerson(id, firstName, lastName, birthDate, company) {
+      const res = await updatePerson(id, {
+        firstName,
+        lastName,
+        birthDate,
+        company,
+      }).catch((err) => err);
+      if (res.status === 200) {
+        return res.data.id;
+      }
+      return false;
+    },
+    async createContact(value, contactMarker, person) {
+      const res = await createContact({ value, contactMarker, person }).catch(
+        (err) => err
+      );
+      if (res.status === 200) {
+        return res.data.id;
+      }
+      return false;
+    },
+    async updateContact(id, value, contactMarker, person) {
+      const res = await updateContact(id, {
+        value,
+        contactMarker,
+        person,
+      }).catch((err) => err);
+      if (res.status === 200) {
+        return res.data.id;
+      }
+      return false;
     },
   },
-});
+};
 </script>
 
 <style></style>

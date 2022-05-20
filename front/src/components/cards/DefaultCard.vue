@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card outlined>
+    <v-card :outlined="outlined" flat class="pa-0 ma-0">
       <v-row no-gutters align="center">
         <v-col>
           <v-card-title>
@@ -12,6 +12,7 @@
             :color="action.color"
             :icon="!!action.icon"
             :text="!action.icon"
+            :disabled="action.disabled"
             :x-small="action.xSmall"
             :small="action.small"
             :large="action.large"
@@ -38,12 +39,8 @@
   </v-container>
 </template>
 
-<script lang="ts">
-import { Vue } from "vue-property-decorator";
-
-import { IDefaultCardAction } from "../../models/DefaultCardInterfaces";
-
-export default Vue.extend({
+<script>
+export default {
   name: "DefaultCardComponent",
   props: {
     title: {
@@ -51,10 +48,14 @@ export default Vue.extend({
       required: true,
     },
     actions: {
-      type: Array as () => IDefaultCardAction[],
+      type: Array,
+    },
+    outlined: {
+      type: Boolean,
+      default: true,
     },
   },
-});
+};
 </script>
 
 <style></style>

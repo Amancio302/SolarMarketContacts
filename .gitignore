@@ -5,6 +5,6 @@ build/
 temp/
 .env
 coverage
-ormconfig.json
+# ormconfig.json
 dist
 front.old/

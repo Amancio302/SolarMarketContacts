@@ -28,4 +28,4 @@ cd front
 npm run serve
 ```
 
-O frontend estará em http://localhost/8080
+O frontend estará em http://localhost:8080
